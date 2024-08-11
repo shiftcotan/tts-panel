@@ -17,12 +17,14 @@
 
 html {
   width: 100%;
+  max-width: 100%;
 }
 
 body {
   display: flex;
   box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
 }
 
 :not(input):not(button):not(textarea),

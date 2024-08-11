@@ -1,7 +1,8 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import fs from "node:fs";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -28,6 +29,24 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 
 let win: BrowserWindow | null;
 
+async function showOpenDialog(browserWindow: BrowserWindow) {
+  const result = await dialog.showOpenDialog(browserWindow, {
+    properties: ["openDirectory"],
+  });
+
+  if (result.canceled) return;
+
+  const [filePath] = result.filePaths;
+  listFilenames(browserWindow, filePath);
+}
+
+async function listFilenames(browserWindow: BrowserWindow, filePath: string) {
+  const contents = fs.readdirSync(filePath);
+
+  browserWindow.webContents.send("root-folder", filePath);
+  browserWindow.webContents.send("filenames", contents);
+}
+
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
@@ -48,6 +67,13 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 }
+
+ipcMain.on("show-open-dialog", (event) => {
+  const browserWindow = BrowserWindow.fromWebContents(event.sender);
+  if (!browserWindow) return;
+
+  showOpenDialog(browserWindow);
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

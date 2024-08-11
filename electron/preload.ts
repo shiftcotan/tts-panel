@@ -1,5 +1,4 @@
 import { ipcRenderer, contextBridge } from "electron";
-import fs from "fs";
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld("ipcRenderer", {
@@ -20,6 +19,16 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
   invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
     const [channel, ...omit] = args;
     return ipcRenderer.invoke(channel, ...omit);
+  },
+  removeAllListeners(
+    ...args: Parameters<typeof ipcRenderer.removeAllListeners>
+  ) {
+    const [channel, ...omit] = args;
+    return ipcRenderer.removeAllListeners(channel, ...omit);
+  },
+
+  showOpenDialog: () => {
+    ipcRenderer.send("show-open-dialog");
   },
 
   // You can expose other APTs you need here.
