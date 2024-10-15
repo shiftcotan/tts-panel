@@ -1,8 +1,8 @@
-import { app, BrowserWindow, dialog, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import fs from "node:fs";
+import { showOpenDialog } from "./utils/showOpenDialog";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -28,24 +28,6 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   : RENDERER_DIST;
 
 let win: BrowserWindow | null;
-
-async function showOpenDialog(browserWindow: BrowserWindow) {
-  const result = await dialog.showOpenDialog(browserWindow, {
-    properties: ["openDirectory"],
-  });
-
-  if (result.canceled) return;
-
-  const [filePath] = result.filePaths;
-  listFilenames(browserWindow, filePath);
-}
-
-async function listFilenames(browserWindow: BrowserWindow, filePath: string) {
-  const contents = fs.readdirSync(filePath);
-
-  browserWindow.webContents.send("root-folder", filePath);
-  browserWindow.webContents.send("filenames", contents);
-}
 
 function createWindow() {
   win = new BrowserWindow({
