@@ -8,6 +8,7 @@ import sshModeAtom from "./atoms/ssh-mode";
 import consoleParser from "./utils/console-parser";
 import sshProfileAtom from "./atoms/ssh-profile";
 import dayjs from "dayjs";
+import NoWorkspace from "./components/modules/no-workspace";
 
 function App() {
   const [sshMode, setSshMode] = useAtom(sshModeAtom);
@@ -92,26 +93,30 @@ function App() {
           {`Last sync: ${dayjs(lastSshSync).format("DD MMM YYYY HH:mm:ss")}`}
         </p>
       )}
-      <div className="flex flex-col gap-1">
-        <section className="grid grid-cols-3 gap-1 mb-2">
-          <h2>Captures</h2>
-          <h2>Stacked</h2>
-          <h2>Edited</h2>
-        </section>
-        {filenames
-          // .filter((file) => file.includes(".wav"))
-          .map((file) => (
-            <div className="grid grid-cols-3 gap-1">
-              <UnprocessedFile name={file} directory={rootFolder} />
-              {isStacked(file) ? (
-                <StackedFile name={file.replace(".wav", "") + ".jpeg"} />
-              ) : (
-                <div></div>
-              )}
-              {isEdited(file) ? <EditedFile /> : <div></div>}
-            </div>
-          ))}
-      </div>
+      {(filenames.length !== 0 || sshMode) && (
+        <div className="flex flex-col gap-1">
+          <section className="grid grid-cols-3 gap-1 mb-2">
+            <h2>Captures</h2>
+            <h2>Stacked</h2>
+            <h2>Edited</h2>
+          </section>
+          {filenames
+            // .filter((file) => file.includes(".wav"))
+            .map((file) => (
+              <div className="grid grid-cols-3 gap-1">
+                <UnprocessedFile name={file} directory={rootFolder} />
+                {isStacked(file) ? (
+                  <StackedFile name={file.replace(".wav", "") + ".jpeg"} />
+                ) : (
+                  <div></div>
+                )}
+                {isEdited(file) ? <EditedFile /> : <div></div>}
+              </div>
+            ))}
+        </div>
+      )}
+
+      {filenames.length === 0 && !sshMode && <NoWorkspace />}
     </main>
   );
 }
