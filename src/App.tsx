@@ -1,7 +1,14 @@
-import { Check, Folder, Settings, SquareArrowOutUpRight } from "lucide-react";
+import {
+  Check,
+  Folder,
+  MonitorCogIcon,
+  Settings,
+  SquareArrowOutUpRight,
+} from "lucide-react";
 import "./App.css";
 import { useEffect, useState } from "react";
 import UnprocessedFile from "./components/modules/unprocessed";
+import SshDialog from "./components/modules/ssh-dialog";
 
 function App() {
   const [rootFolder, setRootFolder] = useState("");
@@ -34,10 +41,10 @@ function App() {
   }
 
   return (
-    <main className="max-w-screen min-h-screen bg-[#141535ff] text-white p-6 flex flex-col gap-6">
+    <main className="flex flex-col min-h-screen gap-6 p-6 text-white max-w-screen bg-background">
       <header className="flex justify-between w-full">
-        <h1 className="text-2xl font-bold">Stackify</h1>
-        <div className="flex gap-3">
+        <h1 className="text-2xl font-bold">TTS Panel</h1>
+        <div className="flex items-center gap-3">
           <div className="flex">
             <div className="px-4 py-2 text-sm rounded-l-md bg-white/10">
               {rootFolder === "" ? "Not selected yet." : rootFolder}
@@ -50,10 +57,8 @@ function App() {
               Choose root folder
             </button>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 rounded-md hover:bg-orange-600">
-            <Settings className="size-4" />
-            Settings
-          </button>
+          or
+          <SshDialog />
         </div>
       </header>
       {/* <section className="grid grid-cols-5 w-full h-full min-h-[500px]">
