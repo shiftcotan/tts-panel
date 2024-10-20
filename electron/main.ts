@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { showOpenDialog } from "./utils/showOpenDialog";
 import { stackImage } from "./utils/stackImage";
-import { connectToSsh } from "./utils/connectSsh";
+import { listRemoteFiles } from "./utils/listRemoteFiles";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -67,11 +67,11 @@ ipcMain.on("stack-image", (event, args) => {
   stackImage(args);
 });
 
-ipcMain.on("connect-to-ssh", (event, args) => {
+ipcMain.on("list-remote-files", (event, args) => {
   const browserWindow = BrowserWindow.fromWebContents(event.sender);
   if (!browserWindow) return;
 
-  connectToSsh({ ...args, browserWindow });
+  listRemoteFiles({ ...args, browserWindow });
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

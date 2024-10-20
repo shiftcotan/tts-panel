@@ -11,10 +11,12 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import sshModeAtom from "../../atoms/ssh-mode";
 import { useAtom } from "jotai";
+import sshProfileAtom from "../../atoms/ssh-profile";
 
 const SshDialog = () => {
   const [open, setOpen] = useState(false);
   const [sshMode] = useAtom(sshModeAtom);
+  const [_, setSshProfile] = useAtom(sshProfileAtom);
   const formik = useFormik({
     initialValues: {
       host: "",
@@ -23,12 +25,13 @@ const SshDialog = () => {
       workingDirectory: "",
     },
     onSubmit: (values) => {
-      (window.ipcRenderer as any).connectToSsh(values);
+      (window.ipcRenderer as any).listRemoteFiles(values);
     },
   });
 
   useEffect(() => {
     if (sshMode) {
+      setSshProfile(formik.values);
       setOpen(false);
     }
   }, [sshMode]);
@@ -92,7 +95,11 @@ const SshDialog = () => {
           </div>
 
           <AlertDialogFooter>
-            <Button type="button" variant="destructive" onClick={() => setOpen(false)}>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => setOpen(false)}
+            >
               Cancel
             </Button>
             <Button type="submit">Connect</Button>

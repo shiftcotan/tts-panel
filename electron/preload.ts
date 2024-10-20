@@ -35,7 +35,7 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     ipcRenderer.send("stack-image", filepath);
   },
 
-  connectToSsh: ({
+  listRemoteFiles: ({
     host,
     username,
     password,
@@ -46,14 +46,11 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     password: string;
     workingDirectory: string;
   }) => {
-    ipcRenderer.send("connect-to-ssh", {
+    ipcRenderer.send("list-remote-files", {
       host,
       username,
       password,
       workingDirectory,
     });
   },
-
-  // You can expose other APTs you need here.
-  // ...
 });

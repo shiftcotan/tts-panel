@@ -6,9 +6,13 @@ import SshDialog from "./components/modules/ssh-dialog";
 import { useAtom } from "jotai";
 import sshModeAtom from "./atoms/ssh-mode";
 import consoleParser from "./utils/console-parser";
+import sshProfileAtom from "./atoms/ssh-profile";
+import dayjs from "dayjs";
 
 function App() {
-  const [_, setSshMode] = useAtom(sshModeAtom);
+  const [sshMode, setSshMode] = useAtom(sshModeAtom);
+  const [sshProfile] = useAtom(sshProfileAtom);
+  const [lastSshSync, setLastSshSync] = useState<Date>();
   const [rootFolder, setRootFolder] = useState("");
   const [filenames, setFilenames] = useState<string[]>([]);
 
@@ -33,6 +37,17 @@ function App() {
       window.ipcRenderer.removeAllListeners("ssh-data");
     };
   }, []);
+
+  useEffect(() => {
+    if (!sshMode || !sshProfile) return;
+    const interval = setInterval(() => {
+      (window.ipcRenderer as any).listRemoteFiles(sshProfile);
+
+      setLastSshSync(new Date());
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [sshMode, sshProfile]);
 
   function chooseRootFolder() {
     (window.ipcRenderer as any).showOpenDialog();
@@ -72,6 +87,11 @@ function App() {
         <div className="bg-[#141535ff] py-3 px-4">
         </div>
       </section> */}
+      {lastSshSync && (
+        <p className="fixed px-3 py-1 text-xs rounded-md bottom-3 left-3 bg-white/10">
+          {`Last sync: ${dayjs(lastSshSync).format("DD MMM YYYY HH:mm:ss")}`}
+        </p>
+      )}
       <div className="flex flex-col gap-1">
         <section className="grid grid-cols-3 gap-1 mb-2">
           <h2>Captures</h2>
