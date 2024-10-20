@@ -3,6 +3,7 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { showOpenDialog } from "./utils/showOpenDialog";
+import { stackImage } from "./utils/stackImage";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -55,6 +56,13 @@ ipcMain.on("show-open-dialog", (event) => {
   if (!browserWindow) return;
 
   showOpenDialog(browserWindow);
+});
+
+ipcMain.on("stack-image", (event, args) => {
+  const browserWindow = BrowserWindow.fromWebContents(event.sender);
+  if (!browserWindow) return;
+
+  stackImage(args);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

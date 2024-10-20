@@ -31,6 +31,10 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     ipcRenderer.send("show-open-dialog");
   },
 
+  stackImage: (filepath: string) => {
+    ipcRenderer.send("stack-image", filepath);
+  },
+
   // You can expose other APTs you need here.
   // ...
 });

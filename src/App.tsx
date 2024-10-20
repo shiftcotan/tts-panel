@@ -1,12 +1,7 @@
-import {
-  ArrowRight,
-  Check,
-  Folder,
-  Settings,
-  SquareArrowOutUpRight,
-} from "lucide-react";
+import { Check, Folder, Settings, SquareArrowOutUpRight } from "lucide-react";
 import "./App.css";
 import { useEffect, useState } from "react";
+import UnprocessedFile from "./components/modules/unprocessed";
 
 function App() {
   const [rootFolder, setRootFolder] = useState("");
@@ -73,10 +68,10 @@ function App() {
           <h2>Edited</h2>
         </section>
         {filenames
-          .filter((file) => file.includes(".wav"))
+          // .filter((file) => file.includes(".wav"))
           .map((file) => (
             <div className="grid grid-cols-3 gap-1">
-              <UnprocessedFile name={file} />
+              <UnprocessedFile name={file} directory={rootFolder} />
               {isStacked(file) ? (
                 <StackedFile name={file.replace(".wav", "") + ".jpeg"} />
               ) : (
@@ -89,17 +84,6 @@ function App() {
     </main>
   );
 }
-
-const UnprocessedFile = ({ name = "sample.wav" }: { name?: string }) => {
-  return (
-    <div className="flex justify-between px-5 py-3 pr-3 text-sm border rounded-md cursor-pointer group bg-white/10 border-white/10 hover:bg-white/15 hover:border-white/20">
-      <p>{name}</p>
-      <button className="items-center hidden gap-2 group-hover:flex">
-        Stack! <ArrowRight className="size-4" />
-      </button>
-    </div>
-  );
-};
 
 const StackedFile = ({ name = "sample.jpeg" }: { name?: string }) => {
   return (
