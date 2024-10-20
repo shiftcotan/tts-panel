@@ -1,16 +1,14 @@
-import {
-  Check,
-  Folder,
-  MonitorCogIcon,
-  Settings,
-  SquareArrowOutUpRight,
-} from "lucide-react";
+import { Check, Folder, SquareArrowOutUpRight } from "lucide-react";
 import "./App.css";
 import { useEffect, useState } from "react";
 import UnprocessedFile from "./components/modules/unprocessed";
 import SshDialog from "./components/modules/ssh-dialog";
+import { useAtom } from "jotai";
+import sshModeAtom from "./atoms/ssh-mode";
+import consoleParser from "./utils/console-parser";
 
 function App() {
+  const [_, setSshMode] = useAtom(sshModeAtom);
   const [rootFolder, setRootFolder] = useState("");
   const [filenames, setFilenames] = useState<string[]>([]);
 
@@ -22,9 +20,17 @@ function App() {
       setRootFolder(path);
     });
 
+    (window.ipcRenderer as any).on("ssh-data", (_: any, content: string) => {
+      if (content === "") return;
+
+      setSshMode(true);
+      setFilenames(consoleParser(content, "UNIX"));
+    });
+
     return () => {
       window.ipcRenderer.removeAllListeners("filenames");
       window.ipcRenderer.removeAllListeners("root-folder");
+      window.ipcRenderer.removeAllListeners("ssh-data");
     };
   }, []);
 

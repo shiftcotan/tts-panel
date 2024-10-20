@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { showOpenDialog } from "./utils/showOpenDialog";
 import { stackImage } from "./utils/stackImage";
+import { connectToSsh } from "./utils/connectSsh";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -33,6 +34,7 @@ let win: BrowserWindow | null;
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
     },
@@ -63,6 +65,13 @@ ipcMain.on("stack-image", (event, args) => {
   if (!browserWindow) return;
 
   stackImage(args);
+});
+
+ipcMain.on("connect-to-ssh", (event, args) => {
+  const browserWindow = BrowserWindow.fromWebContents(event.sender);
+  if (!browserWindow) return;
+
+  connectToSsh({ ...args, browserWindow });
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
