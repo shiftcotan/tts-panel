@@ -1,4 +1,4 @@
-import { MonitorCogIcon } from "lucide-react";
+import { MonitorCheck, MonitorCogIcon } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -12,6 +12,7 @@ import { useFormik } from "formik";
 import sshModeAtom from "../../atoms/ssh-mode";
 import { useAtom } from "jotai";
 import sshProfileAtom from "../../atoms/ssh-profile";
+import cn from "../../utils/cn";
 
 const SshDialog = () => {
   const [open, setOpen] = useState(false);
@@ -39,9 +40,18 @@ const SshDialog = () => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger>
-        <button className="flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 rounded-md hover:bg-orange-600">
-          <MonitorCogIcon className="size-4" />
-          Connect via SSH
+        <button
+          className={cn(
+            "flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 rounded-md hover:bg-orange-600",
+            sshMode && "bg-emerald-600 hover:bg-emerald-700"
+          )}
+        >
+          {sshMode ? (
+            <MonitorCheck className="size-4" />
+          ) : (
+            <MonitorCogIcon className="size-4" />
+          )}
+          {sshMode ? "Connected" : "Connect via SSH"}
         </button>
       </AlertDialogTrigger>
       <AlertDialogContent className="text-white">
