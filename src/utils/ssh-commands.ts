@@ -7,5 +7,5 @@ export function listFilenames(directory: string, osType: "UNIX" | "WINDOWS") {
 }
 
 export function stackImage(filepath: string) {
-  return `tts ${filepath} stdout`;
+  return `tts ${filepath}`;
 }

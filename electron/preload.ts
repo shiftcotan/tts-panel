@@ -1,6 +1,5 @@
 import { ipcRenderer, contextBridge } from "electron";
 
-// --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld("ipcRenderer", {
   on(...args: Parameters<typeof ipcRenderer.on>) {
     const [channel, listener] = args;
@@ -33,6 +32,25 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
 
   stackImage: (filepath: string) => {
     ipcRenderer.send("stack-image", filepath);
+  },
+
+  stackRemoteImage: ({
+    host,
+    username,
+    password,
+    workingDirectory,
+  }: {
+    host: string;
+    username: string;
+    password: string;
+    workingDirectory: string;
+  }) => {
+    ipcRenderer.send("stack-remote-image", {
+      host,
+      username,
+      password,
+      workingDirectory,
+    });
   },
 
   listRemoteFiles: ({

@@ -1,4 +1,4 @@
-import { Check, Folder, SquareArrowOutUpRight } from "lucide-react";
+import { Check, Folder } from "lucide-react";
 import "./App.css";
 import { useEffect, useState } from "react";
 import UnprocessedFile from "./components/modules/unprocessed";
@@ -9,6 +9,8 @@ import consoleParser from "./utils/console-parser";
 import sshProfileAtom from "./atoms/ssh-profile";
 import dayjs from "dayjs";
 import NoWorkspace from "./components/modules/no-workspace";
+import TTSPLogo from "./assets/tts-panel.png";
+import NoSupportedFile from "./components/modules/no-supported-file";
 
 function App() {
   const [sshMode, setSshMode] = useAtom(sshModeAtom);
@@ -55,17 +57,20 @@ function App() {
   }
 
   function isStacked(filename: string) {
-    return filenames.includes(`${filename.replace(".wav", "")}.jpeg`);
+    return filenames.includes(`${filename.replace(".avi", "")}.jpg`);
   }
 
   function isEdited(filename: string) {
-    return filenames.includes(`${filename.replace(".wav", "")}-e.jpeg`);
+    return filenames.includes(`${filename.replace(".avi", "")}-e.jpeg`);
   }
 
   return (
     <main className="flex flex-col min-h-screen gap-6 p-6 text-white max-w-screen bg-background">
       <header className="flex justify-between w-full">
-        <h1 className="text-2xl font-bold">TTS Panel</h1>
+        <div className="flex items-center gap-2">
+          <img src={TTSPLogo} alt="TTS Panel" className="w-10" />
+          <h1 className="text-2xl font-bold">TTS Panel</h1>
+        </div>
         <div className="flex items-center gap-3">
           <div className="flex">
             <div className="px-4 py-2 text-sm rounded-l-md bg-white/10">
@@ -76,7 +81,7 @@ function App() {
               className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-500 rounded-r-md hover:bg-blue-600"
             >
               <Folder className="size-4" />
-              Choose root folder
+              Choose local workspace
             </button>
           </div>
           or
@@ -93,30 +98,34 @@ function App() {
           {`Last sync: ${dayjs(lastSshSync).format("DD MMM YYYY HH:mm:ss")}`}
         </p>
       )}
-      {(filenames.length !== 0 || sshMode) && (
-        <div className="flex flex-col gap-1">
-          <section className="grid grid-cols-3 gap-1 mb-2">
-            <h2>Captures</h2>
-            <h2>Stacked</h2>
-            <h2>Edited</h2>
-          </section>
-          {filenames
-            // .filter((file) => file.includes(".wav"))
-            .map((file) => (
-              <div className="grid grid-cols-3 gap-1">
-                <UnprocessedFile name={file} directory={rootFolder} />
-                {isStacked(file) ? (
-                  <StackedFile name={file.replace(".wav", "") + ".jpeg"} />
-                ) : (
-                  <div></div>
-                )}
-                {isEdited(file) ? <EditedFile /> : <div></div>}
-              </div>
-            ))}
-        </div>
-      )}
+      {(filenames.length !== 0 || sshMode) &&
+        filenames.filter((file) => file.includes(".avi"))[0] && (
+          <div className="flex flex-col gap-1">
+            <section className="grid grid-cols-3 gap-1 mb-2">
+              <h2>Captures</h2>
+              <h2>Stacked</h2>
+              <h2>Edited</h2>
+            </section>
+            {filenames
+              .filter((file) => file.includes(".avi"))
+              .map((file) => (
+                <div className="grid grid-cols-3 gap-1">
+                  <UnprocessedFile name={file} directory={rootFolder} />
+                  {isStacked(file) ? (
+                    <StackedFile name={file.replace(".avi", "") + ".jpg"} />
+                  ) : (
+                    <div></div>
+                  )}
+                  {isEdited(file) ? <EditedFile /> : <div></div>}
+                </div>
+              ))}
+          </div>
+        )}
 
       {filenames.length === 0 && !sshMode && <NoWorkspace />}
+      {filenames.filter((file) => file.includes(".avi")).length === 0 && (
+        <NoSupportedFile />
+      )}
     </main>
   );
 }
@@ -125,9 +134,9 @@ const StackedFile = ({ name = "sample.jpeg" }: { name?: string }) => {
   return (
     <div className="flex justify-between px-5 py-3 pr-3 text-sm border rounded-md cursor-pointer group bg-white/10 border-white/10 hover:bg-white/15 hover:border-white/20">
       <p>{name}</p>
-      <button className="items-center hidden gap-2 group-hover:flex">
+      {/* <button className="items-center hidden gap-2 group-hover:flex">
         Open in GIMP <SquareArrowOutUpRight className="size-4" />
-      </button>
+      </button> */}
     </div>
   );
 };

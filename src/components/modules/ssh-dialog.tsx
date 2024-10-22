@@ -94,7 +94,7 @@ const SshDialog = () => {
 
           <div className="flex flex-col gap-1">
             <label htmlFor="wd" className="text-sm">
-              Working Directory
+              Workspace
             </label>
             <Input
               {...formik.getFieldProps("workingDirectory")}

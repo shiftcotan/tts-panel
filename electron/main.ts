@@ -1,12 +1,13 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import { createRequire } from "node:module";
+// import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { showOpenDialog } from "./utils/showOpenDialog";
-import { stackImage } from "./utils/stackImage";
+import { localStackImage } from "./utils/localStackImage";
 import { listRemoteFiles } from "./utils/listRemoteFiles";
+import { stackRemoteImage } from "./utils/stackRemoteImage";
 
-const require = createRequire(import.meta.url);
+// const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // The built directory structure
@@ -64,7 +65,14 @@ ipcMain.on("stack-image", (event, args) => {
   const browserWindow = BrowserWindow.fromWebContents(event.sender);
   if (!browserWindow) return;
 
-  stackImage(args);
+  localStackImage(args);
+});
+
+ipcMain.on("stack-remote-image", (event, args) => {
+  const browserWindow = BrowserWindow.fromWebContents(event.sender);
+  if (!browserWindow) return;
+
+  stackRemoteImage({ ...args, browserWindow });
 });
 
 ipcMain.on("list-remote-files", (event, args) => {
